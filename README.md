@@ -7,11 +7,8 @@ This version contains the new functionalities I am developing, without  being re
 
 
 Contact:
-
 Romain Lafarguette, Economist
 
-Monetary and Capital Markets 
-
-International Monetary Fund
+Monetary and Capital Markets, International Monetary Fund
 
 rlafarguette "at" imf "dot" org
