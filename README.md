@@ -1,4 +1,4 @@
-# growth-at-risk
+# Growth at Risk
 The developer version of the Growth at Risk model used at the IMF -- still beta
 
 The official, IMF-approved version is available in https://github.com/IMFGAR/GaR
@@ -8,4 +8,4 @@ This version contains the new functionalities I am developing, without  being re
 
 Contact: Romain Lafarguette, rlafarguette "at" imf "dot" org
 
-Economist, International Monetary Fund, Capital Markets Department
+Economist, International Monetary Fund, Monetary and Capital Markets Department (MCM)
