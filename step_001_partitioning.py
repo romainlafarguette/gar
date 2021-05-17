@@ -2,7 +2,7 @@
 """
 Partitioning for the GaR project
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 17:06:46 RLafarguette"
+Time-stamp: "2021-05-17 18:39:37 RLafarguette"
 """
 
 ###############################################################################
@@ -65,6 +65,7 @@ world_fci_l = ['vix', 'oil_price']
 # Create a dictionary, convenient for labeling later
 var_groups_d = {
     'gdp_growth': gdp_growth_l,
+    'domestic_fci': domestic_fci_l,
     'leverage': leverage_l,
     'trade_partners_macro': trade_partners_macro_l,
     'euro_area_fci': euro_area_fci_l,
@@ -127,6 +128,7 @@ df['rolling_gdp_real_yoy_fwd4'] = df['rolling_gdp_real_yoy'].shift(-4)
 
 target_groups_d = {
     'gdp_growth': ['rolling_gdp_real_yoy_fwd4'],
+    'domestic_fci': ['rolling_gdp_real_yoy_fwd4'], 
     'leverage': ['rolling_gdp_real_yoy_fwd4'],
     'trade_partners_macro': ['rolling_gdp_real_yoy_fwd4'],
     'euro_area_fci': ['rolling_gdp_real_yoy_fwd4'],
@@ -172,7 +174,7 @@ dpls_transf.to_csv(pls_transf_p, encoding='utf-8', index=True)
 plot_cols = var_groups_d.keys()
 
 # 2 axes for 2 subplots
-fig, axes = plt.subplots(5,1, figsize=(25,20), sharex=True)
+fig, axes = plt.subplots(6,1, figsize=(25,20), sharex=True)
 dpca_transf[plot_cols].plot(subplots=True, ax=axes, lw=3)
 
 for ax in axes: # Customize each sub chart (the "ax")
@@ -197,7 +199,7 @@ plt.show()
 plot_cols = target_groups_d.keys()
 
 # 2 axes for 2 subplots
-fig, axes = plt.subplots(5,1, figsize=(25,20), sharex=True)
+fig, axes = plt.subplots(6,1, figsize=(25,20), sharex=True)
 dpls_transf[plot_cols].plot(subplots=True, ax=axes, lw=3)
 
 for ax in axes: # Customize each sub chart (the "ax")
