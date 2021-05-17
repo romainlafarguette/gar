@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-Sampling tools
-rlafarguette@imf.org
-Time-stamp: "2019-05-08 21:14:48 RLafarguette"
+Inverse Transform Sampling from Conditional Quantiles with Uncrossing
+Romain Lafarguette, https://github.com/romainlafarguette
+June 2018
+Time-stamp: "2020-11-23 22:26:03 Romain"
 """
-
 
 ###############################################################################
 #%% Imports
 ###############################################################################
-## Modules
-import numpy as np                                      ## Numeric tools
+# Modules
+import numpy as np                                      # Numeric tools
 
-## Methods
-from scipy import interpolate                           ## Linear interpolation
+# Methods
+from scipy import interpolate                           # Linear interpolation
 
-## Functions
-from scipy.stats import t  ## Tdistribution
-from scipy.stats import norm  ## Gaussian distribution
+# Functions
+from scipy.stats import t  # Tdistribution
+from scipy.stats import norm  # Gaussian distribution
 
 ###############################################################################
 #%% Quantile Interpolation following Schmidt and Zhu (2016)
@@ -27,20 +27,19 @@ def quantile_interpolation(alpha, cond_quant_dict):
     Quantile interpolation function, following Schmidt and Zhu (2016) p12
     - Alpha is the quantile that needs to be interpolated
     - cond_quant_dict is the dictionary of quantiles to interpolate on 
-
     Return:
     - The interpolated quantile
     """
 
-    ## List of quantiles
+    # List of quantiles
     qlist = sorted(list(cond_quant_dict.keys()))
     min_q = min(qlist)
     max_q = max(qlist)
 
-    ## Fix the base quantile function (usually a N(0,1))
+    # Fix the base quantile function (usually a N(0,1))
     base = norm.ppf
 
-    ## Considering multiple cases
+    # Considering multiple cases
     if alpha in qlist: ## No need to interpolate, just on the spot !!
         interp = cond_quant_dict[alpha]
 
@@ -57,19 +56,19 @@ def quantile_interpolation(alpha, cond_quant_dict):
         interp = a1 + b1*base(alpha)
         
     elif alpha > max_q: # The right edge (same formula)
-        ## Compute the slope (page 13) 
+        # Compute the slope (page 13) 
         b1_up = (cond_quant_dict[max_q] - cond_quant_dict[min_q])
         b1_low = base(max_q) - base(min_q)
         b1 = b1_up/b1_low
 
-        ## Compute the intercept (page 12)
+        # Compute the intercept (page 12)
         a1 = cond_quant_dict[min_q] - b1*base(min_q)
 
-        ## Compute the interpolated value
+        # Compute the interpolated value
         interp = a1 + b1*base(alpha)
 
     else: # In the belly
-        ## Need to identify the closest quantiles
+        # Need to identify the closest quantiles
         local_min_list = [x for x in qlist if x < alpha]
         local_min = max(local_min_list) # The one immediately below
 
@@ -84,16 +83,17 @@ def quantile_interpolation(alpha, cond_quant_dict):
         # Compute the intercept
         a = cond_quant_dict[local_max] - b*base(local_max)
         
-        ## Compute the interpolated value
+        # Compute the interpolated value
         interp = a + b*base(alpha)
 
-    ## Return the interpolated quantile    
+    # Return the interpolated quantile    
     return(interp)
 
 ###############################################################################
 #%% Uncrossing using Cherzonukov et al (Econometrica 2010)
 ###############################################################################
-def quantiles_uncrossing(cond_quant_dict, method='linear', len_bs=1000):
+def quantiles_uncrossing(cond_quant_dict, method='linear', len_bs=1000,
+                         seed=None):
     """ 
     Uncross a set of conditional_quantiles either via Cherzonukov et al (2010)
     (bootstrapped rearrangement) or Schmidt and Zhu (functional interpolation)
@@ -103,10 +103,8 @@ def quantiles_uncrossing(cond_quant_dict, method='linear', len_bs=1000):
     - Interpolation method: either linear or probabilistic. 
     The probabilistic quantile interpolation follows Zhu and Schmidt 2016
     - len_bs: length of the bootstrapped rearrangement
-
     Output:
     - A dictionary of quantile: uncrossed conditional quantiles
-
     """
     __description = "Quantiles uncrossing, following Cherzonukov et al. (2010)"
     __author = "Romain Lafarguette, IMF, rlafarguette@imf.org"
@@ -115,12 +113,16 @@ def quantiles_uncrossing(cond_quant_dict, method='linear', len_bs=1000):
     ql = sorted(list(cond_quant_dict.keys()))
     
     cond_quant = [cond_quant_dict[q] for q in ql] # Because dict is not ordered
-    
-    np.random.seed(19830525) # Fix a seed for replicability (my gf birthday !)
+
+    # Treatment of the seed for the random numbers generator
+    if seed: # If seed fixed, then use it
+        np.random.seed(seed)
+    else: # Else, use default
+        pass
     
     # Uncrossing
     if sorted(cond_quant) == cond_quant: # Check if the quantiles are crossed
-        print('Conditional quantiles already sorted !')
+        #print('Conditional quantiles already sorted !')
         cond_quant_uncrossed_dict = cond_quant_dict
         
     else: # Uncross them using either of the two methods
@@ -152,28 +154,38 @@ def quantiles_uncrossing(cond_quant_dict, method='linear', len_bs=1000):
         else:
             raise ValueError('Interpolation method misspecified')
             
-    ## Return the uncrossed quantiles    
+    # Return the uncrossed quantiles    
     return(cond_quant_uncrossed_dict)
 
 
 ###############################################################################
 #%% Inverse transform sampling function
 ###############################################################################
-def inv_transform(cond_quant_dict, len_sample=100, method='linear', seed=None):
+def inv_transform(cond_quant_dict, len_sample=1000, method='linear',
+                  len_bs=1000, seed=None):
     """ 
     Sample a list of conditional quantiles via inverse transform sampling
 
     Parameters
-      cond_quant : list     
-        List of conditional quantiles
+    ----------
+      cond_quant_dict : dictionary     
+        Dictionary of conditional quantiles as {quantile: conditional quantile}
 
       quantile_list: list
         List of quantiles (should match cond_quant)
 
-      len_sample : integer, default : 100
-        Size of the sample to be returned
+      len_sample: integer, default=1000
+        Length of the sample to be returned
+
+      len_bs=integer, default=1000
+        Length of the bootstrap for quantiles uncrossing
+
+      seed:integer, default=None
+        Seed of the random numbers generator, for replicability purposes
+
 
     Returns
+    -------
       A sample of length len_sample, with the quantile matching cond_quant
 
     """
@@ -182,15 +194,17 @@ def inv_transform(cond_quant_dict, len_sample=100, method='linear', seed=None):
     __author = "Romain Lafarguette, IMF, rlafarguette@imf.org"
 
 
-    # Treatment of the seed
+    # Treatment of the seed for the random numbers generator
     if seed: # If seed fixed, then use it
         np.random.seed(seed)
     else: # Else, use default
         pass
         
     # Uncross the conditional quantiles if necessary
-    # Using rearrangement technic of Cherzonukov et al. (2010) [see above]
-    u_cond_quant_dict = quantiles_uncrossing(cond_quant_dict, method=method)
+    # Rearrangement either Cherzonukov et al. (2010) or Schmidt and Zhu (2016)
+    u_cond_quant_dict = quantiles_uncrossing(cond_quant_dict,
+                                             method=method,
+                                             len_bs=1000, seed=None)
     
     # Extract lists from dictionary
     quantile_list = sorted(u_cond_quant_dict.keys())
@@ -210,11 +224,9 @@ def inv_transform(cond_quant_dict, len_sample=100, method='linear', seed=None):
     return(sample) 
 
 
-
-
 ###############################################################################
 ###############################################################################
-#%% Other functions
+#%% Miscellaneous
 ###############################################################################
 ###############################################################################
 
@@ -230,13 +242,10 @@ def sample_cols(X, num_reps=1000):
     Parameters
       X : numpy array     
         The matrix to be reshuffled
-
       num_reps: integer; default:1000
         number of replications (columns of a new matrix)
-
     Returns
       A resampled matrix, of size (X.rows, num_reps)
-
     """
 
     __description = "Random sampling of a matrix, by columns"
@@ -259,5 +268,3 @@ def sample_cols(X, num_reps=1000):
         XR[:, col] = X[idx_list[col]]
 
     return(XR)    
-
-
