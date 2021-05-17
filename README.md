@@ -10,7 +10,11 @@ Contact: Romain Lafarguette, rlafarguette "at" imf "dot" org
 Economist, International Monetary Fund, Monetary and Capital Markets Department (MCM)
 
 
-- step_001: group variables into partitions, to reduce parametric noise and
+- step 001: Group variables into partitions, to reduce parametric noise and
   provides more degrees of freedoms. The partitions are estimated using either
   Principal Component Analysis (PCA) or Partial Least Squares (PLS - also
   called projections on latent structures)
+  
+- step 002: estimate the quantile regressions, project GDP growth at different
+  horizons and generate term structure and fan chart plots. Note that the fan
+  charts rely on quantile rearrangement
