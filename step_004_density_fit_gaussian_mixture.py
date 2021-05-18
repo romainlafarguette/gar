@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Fit sample with Gaussian Mixtures
+Fit sample with Gaussian Mixtures for the GaR project
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 19:14:39 RLafarguette"
+Time-stamp: "2021-05-17 19:41:20 RLafarguette"
 """
 
 ###############################################################################
