@@ -2,7 +2,7 @@
 """
 Fit sample with Gaussian Mixtures for the GaR project
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 19:41:20 RLafarguette"
+Time-stamp: "2021-05-18 11:33:41 RLafarguette"
 """
 
 ###############################################################################
@@ -114,8 +114,9 @@ ax3.set_title('Gaussian Mixture and Individual Densities', y=1.02)
 fig.set_size_inches(25, 16)
 fig.tight_layout()
 
+# Save the figure
+fig.savefig(os.path.join('output', 'step_004_gaussian_mixture.pdf'))
 plt.show()
-
 
 ###############################################################################
 #%% End 
