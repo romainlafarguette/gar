@@ -9,6 +9,7 @@ Contact: Romain Lafarguette, rlafarguette "at" imf "dot" org
 
 Economist, International Monetary Fund, Monetary and Capital Markets Department (MCM)
 
+The project is split along different steps, that have to be ran sequentially:
 
 - step 001: Group variables into partitions, to reduce parametric noise and
   provides more degrees of freedoms. The partitions are estimated using either
@@ -18,3 +19,17 @@ Economist, International Monetary Fund, Monetary and Capital Markets Department 
 - step 002: estimate the quantile regressions, project GDP growth at different
   horizons and generate term structure and fan chart plots. Note that the fan
   charts rely on quantile rearrangement
+
+- step 003: fit the sampled density using kernel and parametric
+  densities. Best parametric family is assessed using AIC, BIC or RSS
+  criteria. 
+
+- step 004: fit the density using Gaussian mixtures
+
+- step 005: measure the performance of the density forecasts using PIT,
+  logscores and entropy tests
+
+- step 006: try different quantiles interpolation methods. This script is not
+  very important for a "standard" GaR use, it was rather to test the
+  robustness of the rearrangement approach in quantiles uncrossing and
+  sampling. 
