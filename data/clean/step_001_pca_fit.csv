@@ -1,5 +1,10 @@
 ,group,loadings,explained_variance_ratio
 rolling_gdp_real_yoy,gdp_growth,1.0,1.0
+repo_1W_rate,domestic_fci,0.5872198192674225,0.5169472490686255
+repo_on_rate_diff,domestic_fci,0.08911781028346724,0.5169472490686255
+cpi_inflation_yoy,domestic_fci,0.46316017044304353,0.5169472490686255
+eur_all_vol,domestic_fci,0.374982675565251,0.5169472490686255
+repo_on_vol,domestic_fci,0.5404641979732911,0.5169472490686255
 credit_gdp,leverage,0.48980460974944656,0.49696517506617943
 share_non_resident_liabilities,leverage,0.5121560766735179,0.49696517506617943
 loans_deposits_ratio,leverage,0.705540641915533,0.49696517506617943
