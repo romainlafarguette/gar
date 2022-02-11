@@ -3,11 +3,18 @@ import numpy as np
 from scipy.stats import gaussian_kde
 import warnings
 
-try:
-    from pandas.plotting._tools import (_subplots, _flatten)
-except:
-    #TODO this is a quick fix for #38
-    from pandas.plotting._matplotlib.tools import (_subplots, _flatten)
+import pandas.plotting
+
+# from pandas.plotting._matplotlib.tools import (_subplots, _flatten)
+
+
+# from 
+
+# try:
+#     from pandas.plotting._tools import (_subplots, _flatten)
+# except:
+#     #TODO this is a quick fix for #38
+#     from pandas.plotting._matplotlib.tools import (_subplots, _flatten)
 
 from pandas import (DataFrame, Series)
 from pandas.core.dtypes.common import is_number
@@ -400,10 +407,9 @@ def _joyplot(data,
     global_x_min, global_x_max = min(global_x_range), max(global_x_range)
 
     # Each plot will have its own axis
-    fig, axes = _subplots(naxes=num_axes, ax=ax, squeeze=False,
-                          sharex=True, sharey=False, figsize=figsize,
-                          layout_type='vertical')
-    _axes = _flatten(axes)
+    fig, axes = plt.subplots(num_axes, sharex=True, sharey=False,
+                             figsize=figsize)
+    _axes = axes.ravel()
 
     # The legend must be drawn in the last axis if we want it at the bottom.
     if loc in (3, 4, 8) or 'lower' in str(loc):

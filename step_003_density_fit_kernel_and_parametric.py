@@ -2,7 +2,7 @@
 """
 Density fit
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 19:13:58 RLafarguette"
+Time-stamp: "2022-02-11 00:12:30 rlafarguette"
 Density fit is very easy, as it is already packaged on sklearn and scipy
 Different from Adrian et al. (2019) who are fitting conditional quantiles
 Here we work at the sample level, so we have many more choices
@@ -245,7 +245,7 @@ plt.savefig(best_parametric)
 
 plt.show()
 
-# OK lomax looks much better !
+# Clear that unimodal distributions are doing a poor job...
 
 ###############################################################################
 #%% Standard skewed (like in the GaR paper) => doesn't work well !

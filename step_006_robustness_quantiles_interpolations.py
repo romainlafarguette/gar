@@ -2,7 +2,7 @@
 """
 Try different quantile interpolations methods
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 19:57:31 RLafarguette"
+Time-stamp: "2022-02-11 00:50:17 rlafarguette"
 """
 
 ###############################################################################

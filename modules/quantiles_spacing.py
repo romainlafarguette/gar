@@ -3,7 +3,7 @@
 Quantile Spacing in Numba for fast computation
 Romain Lafarguette, https://github.com/romainlafarguette
 June 2018
-Time-stamp: "2021-05-17 19:48:17 RLafarguette"
+Time-stamp: "2022-02-11 00:50:41 rlafarguette"
 """
 
 ###############################################################################
@@ -37,7 +37,7 @@ def qs_ppf(alpha, qlist, condqlist, base=t2_ppf):
 
     # Make sure that the arrays are 1-D
     # Use ravel, which returns a view, much faster than flatten
-    qlist = np.ravel(qlist)
+    qlist = np.ravel(qlist) # Needed for indexation
     condqlist = np.ravel(condqlist)
     
     # Extremes
@@ -48,9 +48,10 @@ def qs_ppf(alpha, qlist, condqlist, base=t2_ppf):
     max_cq = np.max(condqlist)
     
     # Considering multiple cases    
-    if isin(alpha, qlist)==True: # Just return the true value
-        interp = condqlist[index(qlist, alpha)] # Choose float
+    if alpha in qlist: # Just return the exact quantile value
+        interp = condqlist[np.where(qlist == alpha)]
 
+    # Else, interpolate
     elif alpha < min_q: # Below the minimal quantile
         # Compute the slope (page 13) 
         b1_up = (max_cq - min_cq)
@@ -80,9 +81,9 @@ def qs_ppf(alpha, qlist, condqlist, base=t2_ppf):
         # Need to identify the closest quantiles
         local_min = np.max(qlist[qlist<alpha]) # Immediately below
         local_max = np.min(qlist[qlist>alpha]) # Immediately above
-
-        local_min_cq = condqlist[index(qlist, local_min)]
-        local_max_cq = condqlist[index(qlist, local_max)]
+        
+        local_min_cq = condqlist[np.where(qlist == local_min)]
+        local_max_cq = condqlist[np.where(qlist == local_max)]
 
         # Compute the slope
         b_up = (local_max_cq - local_min_cq)
@@ -95,7 +96,7 @@ def qs_ppf(alpha, qlist, condqlist, base=t2_ppf):
         # Compute the interpolated value
         interp = a + b*base(alpha)
 
-    return(interp) 
+    return(float(interp))
 
 ###############################################################################
 #%% CDF on a single list of conditional quantiles
@@ -105,13 +106,13 @@ def qs_cdf(value, qlist, condqlist, base=t2_ppf, tol=1e-8, maxiter=500):
 
     # Make sure that the arrays are 1-D
     # Use ravel, which returns a view, much faster than flatten
-    qlist = np.ravel(qlist)
+    qlist = np.ravel(qlist)    
     condqlist = np.ravel(condqlist)
  
     # Considering multiple cases   
     # If the value is already known (on the quantile)
-    if isin(value, condqlist)==True: # Just return the true value
-        proba = qlist[index(condqlist, value)]
+    if value in condqlist: # Just return the true value        
+        proba = condqlist[np.where(qlist == value)]
 
     else: # Create the root function for a given tau
                         
@@ -133,13 +134,12 @@ def qs_cdf(value, qlist, condqlist, base=t2_ppf, tol=1e-8, maxiter=500):
         else: # Find the two closest quantiles to initialize the bisection   
             init_cqmin = np.max(condqlist[condqlist<value]) 
             init_cqmax = np.min(condqlist[condqlist>value]) 
-
-            init_qmin = qlist[index(condqlist, init_cqmin)]
-            init_qmax = qlist[index(condqlist, init_cqmax)]
+            
+            init_qmin = condqlist[np.where(qlist == init_cqmin)]
+            init_qmax = condqlist[np.where(qlist == init_cqmax)]
 
 
         # Wrap the function for optimization
-        #@jit('float64(float64)', nopython=True, fastmath=True)
         def wrap_qd(tau):
             return(qs_ppf(tau, qlist, condqlist, base) - value)
             
@@ -147,7 +147,7 @@ def qs_cdf(value, qlist, condqlist, base=t2_ppf, tol=1e-8, maxiter=500):
         proba = bisect(wrap_qd, init_qmin, init_qmax,
                        xtol=tol, maxiter=maxiter)
         
-    return(proba)
+    return(float(proba))
 
 
 ###############################################################################
@@ -245,7 +245,6 @@ def qs_sampling(qlist, condqlist, len_sample=1000, base=t2_ppf):
 ###############################################################################
 #%% Sampling over a conditioning matrix
 ###############################################################################
-@jit(nopython=True, fastmath=True)
 def qs_sampling_mv(qlist, condqlist,
                    len_inner_sample=1000,
                    len_sample=1000, base=t2_ppf):
