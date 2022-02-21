@@ -2,7 +2,7 @@
 """
 Quantiles local projections for the GaR project
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 18:48:10 RLafarguette"
+Time-stamp: "2022-02-16 15:57:57 RLafarguette"
 """
 
 ###############################################################################
@@ -91,7 +91,6 @@ pca_qreg_f = os.path.join('output', 'step_002_qreg_coeffs_pca.pdf')
 plt.savefig(pca_qreg_f)
 
 plt.show()
-
 
 ###############################################################################
 #%% Term structure plots
