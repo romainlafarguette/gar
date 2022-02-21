@@ -2,7 +2,7 @@
 """
 Estimation of the density performance for the GaR project
 Romain Lafarguette, https://romainlafarguette.github.io/
-Time-stamp: "2021-05-17 19:39:09 RLafarguette"
+Time-stamp: "2022-02-20 23:06:12 RLafarguette"
 """
 
 ###############################################################################
@@ -99,7 +99,7 @@ for cdate in dates_l: # For current date
     sample = projection.sample(len_sample=1000)['gdp_growth'].values #Sampling
     
     # Store the sample in a dataframe
-    ndate = cdate + relativedelta(months=3*horizon) # Date at projection
+    ndate = cdate + relativedelta(months=3*horizon) + pd.offsets.MonthEnd(0)
     ds = pd.DataFrame(sample, columns=['forecasted_val'])
     ds.insert(0, 'forecasted_date', ndate) # Keep track of the date
     sample_l.append(ds) # Store in the list
