@@ -1,4 +1,5 @@
-# Growth at Risk
+# Conditional Density Projection via Quantile Regressions, Resampling and Multifit Models
+
 The developer version of the Growth at Risk model used at the IMF -- still beta
 
 The official, IMF-approved version is available in https://github.com/IMFGAR/GaR
