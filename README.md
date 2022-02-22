@@ -6,9 +6,7 @@ The official, IMF-approved version is available in https://github.com/IMFGAR/GaR
 
 This version contains the new functionalities I am developing, without  being reviewed by colleagues. Use them at your own risk !!
 
-Contact: Romain Lafarguette, rlafarguette "at" imf "dot" org
-
-Economist, International Monetary Fund, Monetary and Capital Markets Department (MCM)
+https://romainlafarguette.github.io/software/
 
 The project is split along different steps, that have to be ran sequentially:
 
